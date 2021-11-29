@@ -1,7 +1,9 @@
 function takeInput(websocket){
     document.onkeydown = e=>{
         if (e.key === "Enter"){
-            sendMessage(websocket, document.getElementById('message').value)
+            e.preventDefault()
+            sendMessage(websocket, document.getElementById('message').value);
+            document.getElementById('form').reset();
         }
     }
 }
@@ -14,14 +16,14 @@ async function sendMessage(websocket, message){
 function init(websocket){
     websocket.addEventListener("message",({ data }) => {
         const event = JSON.parse(data);
-        document.querySelector(".messages").innerHTML = event.text;
+        document.querySelector(".messages").innerHTML += event.text;
     });
 }
 
 window.addEventListener("DOMContentLoaded", () => {
-    const websocket = new WebSocket("ws://10.82.16.170:8001");
+    const websocket = new WebSocket("ws://192.168.86.157:8001");
     websocket.onopen = () => {
-        init(websocket)
+        init(websocket);
         takeInput(websocket);
         const event = {type: "fetch"};
         websocket.send(JSON.stringify(event));
