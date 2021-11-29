@@ -1,8 +1,11 @@
 import websockets
 import asyncio
 import json
+import os
 
 connected = []
+
+os.system("python -m http.server")
 
 async def handler(websocket):
     for message in websocket:
