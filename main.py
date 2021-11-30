@@ -3,8 +3,8 @@ import asyncio
 import json
 import os
 
-os.system("cd C:\Users\clemevin000\Documents\GitHub\Text-Chat\\")
-os.system("python -m http.server")
+#os.chdir(os.getcwd())
+#os.system("python -m http.server")
 
 connected = []
 
@@ -34,7 +34,7 @@ async def handler(websocket):
 
 
 async def main():
-    async with websockets.serve(handler,host="10.82.16.170", port=8001):
+    async with websockets.serve(handler,host="localhost", port=8001):
         await asyncio.Future()  # run forever
 
 

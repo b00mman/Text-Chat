@@ -21,7 +21,7 @@ function init(websocket){
 }
 
 window.addEventListener("DOMContentLoaded", () => {
-    const websocket = new WebSocket("ws://10.82.16.170:8001");
+    const websocket = new WebSocket("ws://localhost:8001");
     const params = new URLSearchParams(window.location.search);
     user = params.get("user");
     if (user === ""){
