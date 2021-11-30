@@ -9,19 +9,24 @@ function takeInput(websocket){
 }
 
 async function sendMessage(websocket, message){
-    const event = {type: "message", text: message}
+    const event = {type: "message", user: user, text: message}
     websocket.send(JSON.stringify(event))
 }
 
 function init(websocket){
     websocket.addEventListener("message",({ data }) => {
         const event = JSON.parse(data);
-        document.querySelector(".messages").innerHTML += event.text;
+        document.querySelector(".messages").innerHTML += event.text + "<br>";
     });
 }
 
 window.addEventListener("DOMContentLoaded", () => {
-    const websocket = new WebSocket("ws://192.168.86.157:8001");
+    const websocket = new WebSocket("ws://10.82.16.170:8001");
+    const params = new URLSearchParams(window.location.search);
+    user = params.get("user");
+    if (user === ""){
+        user = "Anonymous";
+    }
     websocket.onopen = () => {
         init(websocket);
         takeInput(websocket);
