@@ -1,19 +1,23 @@
 import websockets
 import asyncio
 import json
-import os
+import sqlite3
 
 #os.chdir(os.getcwd())
 #os.system("python -m http.server")
 
 connected = []
+sql = sqlite3.connect("messages.sqlite3")
+cur = sql.cursor()
+print(cur.fetchall())
 
 async def handler(websocket):
     async for message in websocket:
         message = json.loads(message)
-        print(message["type"])
+        print(message)
         if message["type"] == "message":
             print(message["text"])
+            """
             f = open("messages.txt", "r")
             log = f.read()
             f.close()
@@ -21,7 +25,15 @@ async def handler(websocket):
             f.write(log + message["user"] + ": " + message["text"] + chr(7))
             f.close()
             event = {"type": "message", "text": message["user"] + ": " + message["text"]}
-            websockets.broadcast(iter(connected), json.dumps(event))
+            """
+            text = message["user"] + ": " + message["text"]
+            sql.execute("INSERT INTO Messages(Message) VALUES ({})".format(text))
+            for i in connected:
+                try:
+                    await i.send(json.dumps(event))
+                except websockets.exceptions.ConnectionClosed:
+                    connected.pop(connected.index(i))
+            print(connected)
         elif message["type"] == "fetch":
             connected.append(websocket)
             f = open("messages.txt", "r")
