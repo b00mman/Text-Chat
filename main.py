@@ -24,10 +24,9 @@ async def handler(websocket):
             f = open("messages.txt", "w")
             f.write(log + message["user"] + ": " + message["text"] + chr(7))
             f.close()
-            event = {"type": "message", "text": message["user"] + ": " + message["text"]}
             """
-            text = message["user"] + ": " + message["text"]
-            sql.execute("INSERT INTO Messages(Message) VALUES ({})".format(text))
+            event = {"type": "message", "text": message["text"], "user": message["user"]}
+            sql.execute("INSERT INTO Messages(Message, User) VALUES ('{}', '{}')".format(message["text"], message["user"]))
             for i in connected:
                 try:
                     await i.send(json.dumps(event))

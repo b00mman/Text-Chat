@@ -16,7 +16,7 @@ async function sendMessage(websocket, message){
 function init(websocket){
     websocket.addEventListener("message",({ data }) => {
         const event = JSON.parse(data);
-        document.querySelector(".messages").innerHTML += event.text + "<br>";
+        document.querySelector(".messages").innerHTML += event.user + ": " + event.text + "<br>";
     });
 }
 
