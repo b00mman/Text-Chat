@@ -25,7 +25,7 @@ async def handler(websocket):
             f.close()
             """
             event = {"type": "message", "text": message["text"], "user": message["user"]}
-            db.execute("INSERT INTO Messages (Message, User) VALUES ('{}', '{}');".format(message["text"], message["user"]))
+            db.execute("INSERT INTO Messages (Message, User) VALUES ('{}', '{}');".format(message["text"].replace("'","''"), message["user"].replace("'","''")))
             db.commit()
             for i in connected:
                 try:
