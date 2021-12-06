@@ -7,9 +7,8 @@ import sqlite3
 #os.system("python -m http.server")
 
 connected = []
-sql = sqlite3.connect("messages.sqlite3")
-cur = sql.cursor()
-print(cur.fetchall())
+db = sqlite3.connect("messages.db")
+print(db.execute("SELECT * FROM Messages").fetchall())
 
 async def handler(websocket):
     async for message in websocket:
@@ -26,7 +25,8 @@ async def handler(websocket):
             f.close()
             """
             event = {"type": "message", "text": message["text"], "user": message["user"]}
-            sql.execute("INSERT INTO Messages(Message, User) VALUES ('{}', '{}')".format(message["text"], message["user"]))
+            db.execute("INSERT INTO Messages (Message, User) VALUES ('{}', '{}');".format(message["text"], message["user"]))
+            db.commit()
             for i in connected:
                 try:
                     await i.send(json.dumps(event))
@@ -35,12 +35,9 @@ async def handler(websocket):
             print(connected)
         elif message["type"] == "fetch":
             connected.append(websocket)
-            f = open("messages.txt", "r")
-            log = f.read()
-            f.close()
-            log = log.split(chr(7))
-            for i in range(len(log) - 1):
-                event = {"type": "message", "text": log[i]}
+            log = db.execute("SELECT * FROM Messages").fetchall()
+            for i in log:
+                event = {"type": "message", "text": i[0], "user": i[1]}
                 await websocket.send(json.dumps(event))
 
 
